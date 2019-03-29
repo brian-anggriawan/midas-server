@@ -2,6 +2,7 @@ const db = require('../koneksi/koneksi'),
       global = require('../global_function/global_function'),
       fs = require('fs');
       
+      
 
 exports.index = (req , res) =>{
     let id = req.params.id;
@@ -17,9 +18,10 @@ exports.listdetailfile = (req , res)=>{
         dt = req.params.dt
     db.select('*').from('VW_file')
       .where({
-          vcidrepo: id
-
+          vcidrepo: id,
+          dtperiod: dt
       })
+      .orderBy('dtperiod','desc')
       .then(data => {
           res.json(data);
       })
@@ -33,29 +35,43 @@ exports.sckategori = (req , res )=>{
 
 exports.save = (req , res)  =>{
 
-    let con = [].concat(req.files.file);
-    let count = con.length;
+    let file = req.files.file;
+    let fileOrinalName = file.name;
+    let = { description , kategori , tanggal} = req.body;
+    let DirectoryFile = "\\\\192.168.40.225\\midas-doc\\"+fileOrinalName;
 
-    if( count < 2){
-        let file = req.files.file;
-        let filename =  file.name;
-        file.mv("./File/"+filename )
 
-        let test = fs.readFileSync(file)
+    return db('tbdc_file')
+            .insert({
+                vcidfile: global.idRecord('FL'),
+                vcidrepo: kategori,
+                dtupload: new Date(),
+                dtperiod: global.formatDate(tanggal),
+                vcdescription: description,
+                vcsrcpath: DirectoryFile,
+                vcoriginalname: fileOrinalName,
+                dtentryby: new Date() 
+            }).then(data =>{
+        
+                file.mv(DirectoryFile);
+                res.json(true)
+                
+            }).catch(err =>{
+                console.log(err)
+            })
 
-        return db('tbdc_file').insert({
-            vcidfile: 'haloo2',
-            vmxfile: test.toString('base64')
-        }).then(data =>{
-            res.json(true)
-        })
-    }else{
-        for(let i = 0; i <= (count - 1); i++){
-
-            let file = req.files.file[i];
-            let filename =  file.name;
-            file.mv("./File/"+filename )   
-    }
 }
+
+exports.Downloadfile = (req , res) => {
+    let {id} = req.params;
+    let DirectoryFile = "\\\\192.168.40.225\\midas-doc\\";
+
+    db.select('*').from('tbdc_file')
+      .where('vcidfile' ,id)
+      .then(data =>{
+          if (data) {
+            res.download(DirectoryFile+data[0].VCORIGINALNAME)
+          }
+      })
 
 }
