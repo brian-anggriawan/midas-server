@@ -1,5 +1,6 @@
 const db = require('../koneksi/koneksi'),
-      global = require('../global_function/global_function');
+      global = require('../global_function/global_function'),
+      mkdir = require('mkdirp');
 
 exports.index = (req , res) =>{
     db.select('*').from('tbdc_repository').then(data =>{
@@ -8,17 +9,19 @@ exports.index = (req , res) =>{
 }
 
 exports.save = (req , res) =>{
-    let { name , file , jenis , ket} = req.body;
+    let { name , jenis , ket} = req.body;
+    let id  = global.idRecord('MST');
+
     db('tbdc_repository')
     .insert({
-        vcidrepo: global.idRecord('MST'),
+        vcidrepo: id,
         dtcreate: new Date(),
         vcdescription: name,
-        vcstandartfilename: file,
         vcjenisrepo: jenis,
         txket: ket,
         dtentryby: new Date()
     }).then(()=>{
         res.json(true);
+        mkdir(global.urlfile+id)
     })
 }

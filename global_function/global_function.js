@@ -18,7 +18,8 @@ const formatDate = (date) => {
     return [year, month, day].join('-');
 }
 
+const urlfile = '\\\\192.168.40.225\\midas-doc\\'
 
 
 
-module.exports = {idRecord , formatDate };
+module.exports =  {idRecord , formatDate ,urlfile };
