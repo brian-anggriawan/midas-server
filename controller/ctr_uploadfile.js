@@ -40,6 +40,8 @@ exports.save = (req , res)  =>{
     let fileOrinalName = file.name;
     let = { description , kategori , tanggal , blob} = req.body;
 
+    console.log(file)
+    /*
     db.select('*').from('vw_file')
       .where('vcidrepo',kategori)
       .then(res =>{
@@ -77,7 +79,7 @@ exports.save = (req , res)  =>{
                 })
     
       })
-
+*/
       res.json(true)    
   
 }
