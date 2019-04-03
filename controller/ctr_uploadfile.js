@@ -8,6 +8,7 @@ exports.index = (req , res) =>{
     let id = req.params.id;
     db.select('*').from('VW_GROUPFILE')
       .where('vcidrepo',id)
+      .orderBy('dtperiod','desc')
       .then(data => {
           res.json(data);
       })
@@ -34,14 +35,20 @@ exports.sckategori = (req , res )=>{
     });
 }
 
+exports.kategoriByid = (req , res)=>{
+    db.select('*').from('tbdc_repository')
+      .where('vcidrepo',req.params.id)
+      .then(data =>{
+          res.json(data)
+      })
+}
+
 exports.save = (req , res)  =>{
 
     let file = req.files.file;
     let fileOrinalName = file.name;
-    let = { description , kategori , tanggal , blob} = req.body;
+    let = { description , kategori , tanggal , blob ,minggu} = req.body;
 
-    console.log(file)
-    /*
     db.select('*').from('vw_file')
       .where('vcidrepo',kategori)
       .then(res =>{
@@ -67,6 +74,7 @@ exports.save = (req , res)  =>{
                     vcdescription: description,
                     vmxfile: blob,
                     vcsrcpath: DirectoryFile,
+                    VCWEEKLY: minggu,
                     vcfilename: filename,
                     vcoriginalname: fileOrinalName,
                     dtentryby: new Date() 
@@ -78,8 +86,7 @@ exports.save = (req , res)  =>{
                     console.log(err)
                 })
     
-      })
-*/
+      }) 
       res.json(true)    
   
 }

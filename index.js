@@ -9,6 +9,7 @@ const express = require('express'),
       jwtmw = exjwt({
         secret: 'brian wahyu'
       }),
+      mugen = require('./koneksi/con_general'),
       cors = require('cors');
 
 
@@ -17,50 +18,55 @@ app.use(bodyParser.urlencoded({ extended:false }));
 app.use(cors());
 app.use(fileupload());
 
-let user = [
-    {
-        id: 1,
-        name: 'brian',
-        password: '1234'
-    }
-]
-
 /* Login */
 
 app.post('/login' , (req , res)=>{
     let { name , pass } = req.body;
-    let data = user[0];
 
-    if (data.name === name && data.password === pass) {
-        let token = jwt.sign({ id: data.id , username: data.name},'brian wahyu' ,{expiresIn: 129600});
-        res.json({
-            sucess: true,
-            token
-        })
+    mugen.select('*').from('vw_list_usrlogin')
+         .where({
+            USERNAME: name,
+            PASSWORD: pass
+         })
+         .then(data =>{
 
-        console.log(token)
-    }else{
-        res.json({
-            sucess: false
-        })
-    }
-
+            if (data.length > 0) {
+                let token = jwt.sign({ id: data.IDLOGIN , username: data.USERNAME},'brian wahyu' ,{expiresIn: 129600});  
+                res.json({
+                    sucess: true,
+                    token,
+                    data
+                })
+            }else{
+                res.json({
+                    sucess: false
+                })  
+            }
+         })
 })
 
 
+app.get('/data',(req , res)=>{
+    mugen.select('*').from('vw_list_usrlogin')
+         .then(data =>{
+             res.json(data)
+         })
+})
+
 /* Login */
 
-app.get('/', jwtmw,(req , res)=>{
-    res.json('API MIdas');
+app.get('/', (req , res)=>{
+    res.json('Rest API Mustikatama Document Management System');
 });
 
-app.all('*' , jwtmw);
+app.all('/api/*' , jwtmw);
 
 app.use((err , req , res , next)=>{
     if (err.name === 'UnauthorizedError') {
         res.json({
             status: 'error',
-            token: 'invalid'
+            token: 'invalid',
+            ket: 'Harus Login Dulu Goblok'
         })
     }else{
         next();
