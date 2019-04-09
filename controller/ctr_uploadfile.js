@@ -29,8 +29,23 @@ exports.listdetailfile = (req , res)=>{
       })
 }
 
+exports.listRepository = (req , res)=>{
+    let {user} = req.params;
+
+    db.select('*').from('vw_list_access_repository')
+      .where('id_user', user)
+      .orderBy('tanggal_repo')
+      .then(data =>{
+          res.json(data)
+      })
+}
+
 exports.sckategori = (req , res )=>{
-    db.select('*').from('tbdc_repository').then(data =>{
+    let {user} = req.params;
+
+    db.select('*').from('tbdc_repository')
+      .where('vcentryby',user)
+      .then(data =>{
         res.json(data);
     });
 }
@@ -47,7 +62,7 @@ exports.save = (req , res)  =>{
 
     let file = req.files.file;
     let fileOrinalName = file.name;
-    let = { description , kategori , tanggal , blob ,minggu} = req.body;
+    let = { description , kategori , tanggal , blob ,minggu ,user} = req.body;
 
     db.select('*').from('vw_file')
       .where('vcidrepo',kategori)
@@ -77,6 +92,7 @@ exports.save = (req , res)  =>{
                     VCWEEKLY: minggu,
                     vcfilename: filename,
                     vcoriginalname: fileOrinalName,
+                    vcentryby: user,
                     dtentryby: new Date() 
                 }).then(data =>{
             
