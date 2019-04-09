@@ -1,6 +1,8 @@
 const masterFile = require('../controller/ctr_masterfile');
 const uploadFile = require('../controller/ctr_uploadfile');
 const accessmenu = require('../controller/ctr_access_menu');
+const global = require('../controller/ctr_global');
+const accessrepo = require('../controller/cts_access_repo');
 
 module.exports = (app)=>{
 
@@ -10,11 +12,17 @@ module.exports = (app)=>{
 
     /* Access Menu */
 
+    /* API Global */
+
+    app.route('/api/sbu').get(global.sbu)
+    app.route('/api/dpt/:id').get(global.dpt)
+    app.route('/api/userFilter/:sbu/:dpt').get(global.userFilter);
+
+    /* API Global */
+
     /* Master File */
 
     app.route('/api/repository/:user').get(masterFile.index);
-    app.route('/api/repository/sbu/sbu').get(masterFile.sbu);
-    app.route('/api/repository/dpt/:id').get(masterFile.divisi);
     app.route('/api/repository').post(masterFile.save);
     
     /* Master File */
@@ -29,4 +37,14 @@ module.exports = (app)=>{
     app.route('/api/kategoribyid/:id').get(uploadFile.kategoriByid);
     app.route('/api/uploadfile/repo/:user').get(uploadFile.listRepository);
     /* File Upload */
+
+    /* API User repo */
+
+    app.route('/api/accessrepo/:id').get(accessrepo.listAccess);
+    app.route('/api/accessrepo/repo/:id').get(accessrepo.listRepo);
+    app.route('/api/accessrepo').post(accessrepo.save);
+    app.route('/api/accessrepo').delete(accessrepo.delete);
+
+
+    /* API User repo */
 }
