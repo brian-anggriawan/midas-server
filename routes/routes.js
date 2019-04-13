@@ -22,7 +22,8 @@ module.exports = (app)=>{
 
     /* Master File */
 
-    app.route('/api/repository/:user').get(masterFile.index);
+    app.route('/api/repository').get(masterFile.index);
+    app.route('/api/repository/user/:id').get(masterFile.listuser);
     app.route('/api/repository').post(masterFile.save);
     
     /* Master File */

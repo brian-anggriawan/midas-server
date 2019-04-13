@@ -26,6 +26,7 @@ exports.listRepo = (req , res) =>{
 exports.delete = (req , res)=>{
     let {id} = req.body;
 
+
     return db('tbapp_access_repo')
            .where('vcidaccrepo', id)
            .del()

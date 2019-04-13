@@ -59,7 +59,7 @@ app.get('/', (req , res)=>{
     res.json('Rest API Mustikatama Document Management System');
 });
 
-//app.all('/api/*' , jwtmw);
+app.all('/api/*' , jwtmw);
 
 app.use((err , req , res , next)=>{
     if (err.name === 'UnauthorizedError') {

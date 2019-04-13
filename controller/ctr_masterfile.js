@@ -3,19 +3,29 @@ const db = require('../koneksi/koneksi'),
       mkdir = require('mkdirp');
 
 exports.index = (req , res) =>{
-    let {user}  = req.params
+    //let {user}  = req.params
 
     db.select('*').from('vw_list_repository')
-      .where('vcentryby',user)
+      //.where('vcentryby',user)
       .then(data =>{
         res.json(data);
     });
 }
 
+exports.listuser = (req , res)=>{
+    let {id} = req.params;
+
+    db.select('*').from('vw_list_access_repository')
+      .where('ID_REPO' , id)
+      .then(data =>{
+          res.json(data)
+      })
+}
 
 exports.save = (req , res) =>{
-    let { name , jenis , ket , user ,divisi , sbu} = req.body;
+    let { name , jenis , ket , user ,divisi , sbu ,nodoc} = req.body;
     let id  = global.idRecord('MST');
+    let docname = `${nodoc}-${name}`;
 
     db('tbdc_repository')
     .insert({
@@ -26,10 +36,76 @@ exports.save = (req , res) =>{
         txket: ket,
         vcidsbu: sbu,
         vciddept: divisi,
+        vcnodoc: nodoc,
         vcentryby: user,
         dtentryby: new Date()
     }).then(()=>{
-        res.json(true);
-        mkdir(global.urlfile+id)
+        
+        if (jenis ==='Harian') {
+            let i = 1;
+            let b = 25;
+            let data = [];   
+
+            for(i; i <= b; i++){
+                data.push({
+                    vcidtmprepo: id+global.idRecord('TMPREPO')+i,
+                    vcidrepo: id,
+                    vcjenis: `HEK ${i}`,
+                    vcentryby: user,
+                    dtentryby: new Date()
+                })  
+            }
+            return db('tbdc_template_repository').insert(data).then(()=>{
+                    mkdir(global.urlfile+docname)
+                    res.json(true)
+            })
+
+        }else if (jenis==='Mingguan') {
+           let i = 1;
+           let b = 4;
+           let data = [];
+
+           for(i; i <= b; i++){
+                data.push({
+                    vcidtmprepo: id+global.idRecord('TMPREPO')+i,
+                    vcidrepo: id,
+                    vcjenis: `Minggu ${i}`,
+                    vcentryby: user,
+                    dtentryby: new Date()   
+                })
+           }
+           res.json(true);
+           return db('tbdc_template_repository').insert(data).then(()=> {
+                    mkdir(global.urlfile+docname)
+                    res.json(true)
+           });
+            
+        }else if(jenis==='Bulanan'){
+            return db('tbdc_template_repository')
+                   .insert({
+                        vcidtmprepo: id+global.idRecord('TMPREPO'),
+                        vcidrepo: id,
+                        vcjenis: 'Bulan',
+                        vcentryby: user,
+                        dtentryby: new Date()
+                   })
+                   .then(()=>{
+                        mkdir(global.urlfile+docname)
+                        res.json(true)
+                   })
+        }else if (jenis === 'Tahunan') {
+            return db('tbdc_template_repository')
+            .insert({
+                 vcidtmprepo: id+global.idRecord('TMPREPO'),
+                 vcidrepo: id,
+                 vcjenis: 'Tahun',
+                 vcentryby: user,
+                 dtentryby: new Date()
+            })
+            .then(()=>{
+                mkdir(global.urlfile+docname)
+                res.json(true)
+            })  
+        }
     })
 }
