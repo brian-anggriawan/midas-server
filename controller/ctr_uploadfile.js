@@ -6,9 +6,9 @@ const db = require('../koneksi/koneksi'),
 
 exports.index = (req , res) =>{
     let id = req.params.id;
-    db.select('*').from('VW_GROUPFILE')
-      .where('vcidrepo',id)
-      .orderBy('dtperiod','desc')
+    db.select('*').from('vw_list_template_repository')
+      .where('id_repo',id)
+      .orderBy('counter','asc')
       .then(data => {
           res.json(data);
       })
@@ -117,5 +117,4 @@ exports.Downloadfile = (req , res) => {
             res.download(global.urlfile+data[0].VCIDREPO+'//'+data[0].VCFILENAME)
           }
       })
-
 }

@@ -1,4 +1,5 @@
 let mugen = require('../koneksi/con_general');
+let db = require('../koneksi/koneksi');
 
 
 exports.sbu = (req , res)=>{
@@ -29,4 +30,18 @@ exports.userFilter = (req , res)=>{
           .then(data =>{
               res.json(data)
           })
+}
+
+exports.accperiod = (req , res)=>{
+    db.select('*').from('vw_accperiod_Select')
+      .then(data =>{
+          res.json(data)
+      })
+}
+
+exports.periodtoday = (req , res) =>{
+    db.select('*').from('vw_select_period')
+      .then(data =>{
+          res.json(data)
+      })
 }

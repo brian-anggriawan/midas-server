@@ -17,6 +17,8 @@ module.exports = (app)=>{
     app.route('/api/sbu').get(global.sbu)
     app.route('/api/dpt/:id').get(global.dpt)
     app.route('/api/userFilter/:sbu/:dpt').get(global.userFilter);
+    app.route('/api/accperiod').get(global.accperiod);
+    app.route('/api/periodtoday').get(global.periodtoday);
 
     /* API Global */
 
