@@ -32,13 +32,13 @@ module.exports = (app)=>{
 
     /* File Upload */
 
-    app.route('/api/uploadfile/:id').get(uploadFile.index);
-    app.route('/api/uploadsckategori/:user').get(uploadFile.sckategori);
-    app.route('/api/uploadfiledetail/:id/:dt').get(uploadFile.listdetailfile);
+    app.route('/api/uploadfile/:idrepo/:idperiod').get(uploadFile.index);
+    app.route('/api/uploadfiledetail/:idtemplate/:idperiod').get(uploadFile.listdetailfile);
     app.route('/api/uploadfile').post(uploadFile.save);
     app.route('/api/downloadfile/:id').get(uploadFile.Downloadfile);
-    app.route('/api/kategoribyid/:id').get(uploadFile.kategoriByid);
-    app.route('/api/uploadfile/repo/:user').get(uploadFile.listRepository);
+    app.route('/api/uploadfile/repo/:user/:idperiod').get(uploadFile.listRepository);
+    app.route('/api/uploadfile').put(uploadFile.updateinflag);
+
     /* File Upload */
 
     /* API User repo */

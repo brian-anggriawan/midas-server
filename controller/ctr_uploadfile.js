@@ -1,71 +1,65 @@
 const db = require('../koneksi/koneksi'),
       path = require('path'),
+      sql = require('mssql'),
       global = require('../global_function/global_function');
       
       
 
 exports.index = (req , res) =>{
-    let id = req.params.id;
-    db.select('*').from('vw_list_template_repository')
-      .where('id_repo',id)
-      .orderBy('counter','asc')
-      .then(data => {
-          res.json(data);
-      })
+    let { idrepo , idperiod } = req.params;
+    
+    new sql.ConnectionPool(global.configsp).connect().then(pool =>{
+        return pool.request().query(`
+                EXEC [dbo].[List_Group_File] 
+                @idrepo = ${idrepo},
+                @idperiod = ${idperiod};
+        `).then(row =>{
+            let  data = row.recordset;
+            res.json(data)
+        })
+    })
 }
 
 
 exports.listdetailfile = (req , res)=>{
-    let id = req.params.id,
-        dt = req.params.dt
+    let {idtemplate , idperiod} = req.params;
+
     db.select('*').from('VW_file')
       .where({
-          vcidrepo: id,
-          dtperiod: dt
+          id_template : idtemplate,
+          id_period: idperiod
       })
-      .orderBy('dtperiod','desc')
+      .orderBy('status','desc')
       .then(data => {
           res.json(data);
       })
 }
 
 exports.listRepository = (req , res)=>{
-    let {user} = req.params;
+    let {user , idperiod} = req.params;
 
-    db.select('*').from('vw_list_access_repository')
-      .where('id_user', user)
-      .orderBy('tanggal_repo')
-      .then(data =>{
-          res.json(data)
-      })
+    new sql.ConnectionPool(global.configsp).connect().then(pool =>{
+        return pool.request().query(`EXEC [dbo].[List_Access_Repository] 
+                                            @iduser = ${user},
+                                            @period = ${idperiod}`).then(result =>{
+                                                let rows = result.recordset;
+                                                res.json(rows)
+                                            })
+    })
 }
 
-exports.sckategori = (req , res )=>{
-    let {user} = req.params;
-
-    db.select('*').from('tbdc_repository')
-      .where('vcentryby',user)
-      .then(data =>{
-        res.json(data);
-    });
-}
-
-exports.kategoriByid = (req , res)=>{
-    db.select('*').from('tbdc_repository')
-      .where('vcidrepo',req.params.id)
-      .then(data =>{
-          res.json(data)
-      })
-}
 
 exports.save = (req , res)  =>{
 
     let file = req.files.file;
     let fileOrinalName = file.name;
-    let = { description , kategori , tanggal , blob ,minggu ,user} = req.body;
+    let = { description , template , idperiod ,period, directory, nodoc ,repo , blob ,user} = req.body;
 
     db.select('*').from('vw_file')
-      .where('vcidrepo',kategori)
+      .where({
+          id_template: template,
+          id_period: idperiod
+      })
       .then(res =>{
          let count = res.length;
          let nilai = '';
@@ -76,45 +70,70 @@ exports.save = (req , res)  =>{
              nilai = count + 1;
          }
 
-         let filename = kategori+'_'+nilai+path.extname(fileOrinalName);
-         let DirectoryFile = global.urlfile+kategori+'\\'+filename;
-
+         let filename = nodoc+'-'+repo+'-'+period+'-'+nilai+path.extname(fileOrinalName);
+         let DirectoryFile = global.urlfile+directory+'\\'+filename;
 
          return db('tbdc_file')
                 .insert({
                     vcidfile: global.idRecord('FL'),
-                    vcidrepo: kategori,
+                    vcidtmprepo: template,
                     dtupload: new Date(),
-                    dtperiod: global.formatDate(tanggal),
+                    vcidaccperiod: idperiod,
                     vcdescription: description,
                     vmxfile: blob,
-                    vcsrcpath: DirectoryFile,
-                    VCWEEKLY: minggu,
+                    vcsrcpath: directory+'\\'+filename,
                     vcfilename: filename,
                     vcoriginalname: fileOrinalName,
                     vcentryby: user,
-                    dtentryby: new Date() 
+                    dtentryby: new Date(),
+                    inflagactive: 1
                 }).then(data =>{
-            
-                    file.mv(DirectoryFile);
+
+                    file.mv(DirectoryFile);   
                     
                 }).catch(err =>{
                     console.log(err)
                 })
-    
-      }) 
-      res.json(true)    
-  
+        
+      })  
+      res.json(true)
+}
+
+exports.updateinflag = (req , res) =>{
+    let { template , idperiod } = req.body;
+
+    db.select('*').from('vw_file')
+      .where({
+          id_template: template,
+          id_period: idperiod,
+          active: 1
+      })
+      .then(res=>{
+        let count = res.length;
+
+        if (count !== 0) {
+            let id = res[0].ID_FILE;
+
+            return db('tbdc_file')
+                   .where('vcidfile' , id)
+                   .update({
+                       inflagactive: 0
+                   }) 
+        }
+        
+      })  
+
+    res.json(true)
 }
 
 exports.Downloadfile = (req , res) => {
     let {id} = req.params;
 
-    db.select('*').from('tbdc_file')
-      .where('vcidfile' ,id)
+    db.select('*').from('vw_file')
+      .where('id_file' ,id)
       .then(data =>{
           if (data) {
-            res.download(global.urlfile+data[0].VCIDREPO+'//'+data[0].VCFILENAME)
+            res.download(global.urlfile+data[0].PATH)
           }
       })
 }

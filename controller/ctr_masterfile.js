@@ -37,6 +37,7 @@ exports.save = (req , res) =>{
         vcidsbu: sbu,
         vciddept: divisi,
         vcnodoc: nodoc,
+        vcdirectory: docname,
         vcentryby: user,
         dtentryby: new Date()
     }).then(()=>{
@@ -74,7 +75,6 @@ exports.save = (req , res) =>{
                     dtentryby: new Date()   
                 })
            }
-           res.json(true);
            return db('tbdc_template_repository').insert(data).then(()=> {
                     mkdir(global.urlfile+docname)
                     res.json(true)

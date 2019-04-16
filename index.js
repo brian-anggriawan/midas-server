@@ -10,7 +10,7 @@ const express = require('express'),
         secret: 'brian wahyu'
       }),
       mugen = require('./koneksi/con_general'),
-      mssql = require('mssql'),
+      sql = require('./koneksi/koneksi'),
       cors = require('cors');
 
 
@@ -57,24 +57,7 @@ app.get('/data',(req , res)=>{
 /* Login */
 
 app.get('/', (req , res)=>{
-
-    var config = {
-        user: 'wh01',
-        password: 'W4r3house',
-        server: '192.168.0.7', 
-        database: 'midas' 
-    };
-
-    mssql.connect(config , (err)=>{
-        let hal = new mssql.Request();
-        
-        let data = '2019/04/13'
-
-        hal.query(`select * from dbo.tb_accperiod(${data})` ,(err , row)=>{
-            res.json(row)
-        })
-    })
-    //res.json('Rest API Mustikatama Document Management System');
+    res.json('Selamat Datang Di Rest API Midas')
 });
 
 app.all('/api/*' , jwtmw);

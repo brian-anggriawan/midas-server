@@ -20,6 +20,13 @@ const formatDate = (date) => {
 
 const urlfile = '\\\\192.168.40.225\\midas-doc\\'
 
+const configsp = {
+    user: 'wh01',
+    password: 'W4r3house',
+    server: '192.168.0.7', 
+    database: 'midas' 
+};
 
 
-module.exports =  {idRecord , formatDate ,urlfile };
+
+module.exports =  {idRecord , formatDate ,urlfile , configsp };
