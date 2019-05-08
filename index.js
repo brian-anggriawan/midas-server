@@ -60,7 +60,7 @@ app.get('/', (req , res)=>{
     res.json('Selamat Datang Di Rest API Midas')
 });
 
-app.all('/api/*' , jwtmw);
+//app.all('/api/*' , jwtmw);
 
 app.use((err , req , res , next)=>{
     if (err.name === 'UnauthorizedError') {

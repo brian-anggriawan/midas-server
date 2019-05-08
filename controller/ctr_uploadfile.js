@@ -1,6 +1,7 @@
 const db = require('../koneksi/koneksi'),
       path = require('path'),
       sql = require('mssql'),
+      fs = require('fs'),
       global = require('../global_function/global_function');
       
       
@@ -71,7 +72,8 @@ exports.save = (req , res)  =>{
          }
 
          let filename = nodoc+'-'+repo+'-'+period+'-'+nilai+path.extname(fileOrinalName);
-         let DirectoryFile = global.urlfile+directory+'\\'+filename;
+         file.mv(`./File/${filename}`)
+         //let DirectoryFile = global.urlfile+directory+'\\'+filename;
 
          return db('tbdc_file')
                 .insert({
@@ -88,13 +90,18 @@ exports.save = (req , res)  =>{
                     dtentryby: new Date(),
                     inflagactive: 1
                 }).then(data =>{
+                    global.authAzure.createFileFromLocalFile('midas',directory,filename,`./File/${filename}` ,(err ,result , response)=>{
+                        if (err) {
+                            console.log(err)
+                        }
 
-                    file.mv(DirectoryFile);   
+                        fs.unlinkSync(`./File/${filename}`)
+                    })  
                     
                 }).catch(err =>{
                     console.log(err)
                 })
-        
+       
       })  
       res.json(true)
 }
@@ -133,7 +140,29 @@ exports.Downloadfile = (req , res) => {
       .where('id_file' ,id)
       .then(data =>{
           if (data) {
-            res.download(global.urlfile+data[0].PATH)
+            //res.download(global.urlfile+data[0].PATH)
+            let col = data[0];
+            global.authAzure.getFileToLocalFile('midas',col.DIRECTORY,col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
+                if (err) {
+                    console.log(err)
+                }
+                res.download(`./File/${col.FILE_NAME}`)  
+            })
+          }
+      })
+}
+
+
+exports.delete = (req , res)=>{
+    let {id} = req.params;
+
+    db.select('*').from('vw_file')
+      .where('id_file' , id)
+      .then(data =>{
+          if (data) {
+             let col = data[0];
+             fs.unlinkSync(`./File/${col.FILE_NAME}`) 
+             res.json(true)
           }
       })
 }

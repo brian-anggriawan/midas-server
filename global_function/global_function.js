@@ -1,3 +1,4 @@
+const azure = require('azure-storage');
 
 const idRecord = (prefix) =>{
     let time = new Date(),
@@ -27,6 +28,10 @@ const configsp = {
     database: 'midas' 
 };
 
+const authAzure = azure.createFileService('DefaultEndpointsProtocol=https;AccountName=hddmtg;AccountKey=lJAaiYFxh46WptcXqRZf08zz8uGf/tOx+8t/cMz7cXAvRORiXJgig5Nav/ZV3NHG5Dy4fvEcefGXVNO6Ep1alQ==;EndpointSuffix=core.windows.net')
 
 
-module.exports =  {idRecord , formatDate ,urlfile , configsp };
+
+
+
+module.exports =  {idRecord , formatDate ,urlfile , configsp ,authAzure };

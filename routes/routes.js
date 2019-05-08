@@ -3,6 +3,7 @@ const uploadFile = require('../controller/ctr_uploadfile');
 const accessmenu = require('../controller/ctr_access_menu');
 const global = require('../controller/ctr_global');
 const accessrepo = require('../controller/cts_access_repo');
+const formatfile = require('../controller/ctr_format_file');
 
 module.exports = (app)=>{
 
@@ -36,6 +37,7 @@ module.exports = (app)=>{
     app.route('/api/uploadfiledetail/:idtemplate/:idperiod').get(uploadFile.listdetailfile);
     app.route('/api/uploadfile').post(uploadFile.save);
     app.route('/api/downloadfile/:id').get(uploadFile.Downloadfile);
+    app.route('/api/deletefile/:id').get(uploadFile.delete);
     app.route('/api/uploadfile/repo/:user/:idperiod').get(uploadFile.listRepository);
     app.route('/api/uploadfile').put(uploadFile.updateinflag);
 
@@ -50,4 +52,15 @@ module.exports = (app)=>{
 
 
     /* API User repo */
+
+    /* API Format File */
+    app.route('/api/formatfile/:id').get(formatfile.listRepo);
+    app.route('/api/formatfile/detail/:id').get(formatfile.listformat);
+    app.route('/api/formatfile').post(formatfile.save);
+    app.route('/api/formatfile').put(formatfile.updateinflag);
+    app.route('/api/formatfile/download/:id').get(formatfile.Downloadfile);
+    app.route('/api/formatfile/download2/:id').get(formatfile.Downloadfile2);
+    app.route('/api/formatfile/delete/:id').get(formatfile.delete);
+    app.route('/api/formatfile/index/:id').get(formatfile.index);
+    /* API Format File */
 }
