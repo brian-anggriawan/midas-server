@@ -4,6 +4,7 @@ const accessmenu = require('../controller/ctr_access_menu');
 const global = require('../controller/ctr_global');
 const accessrepo = require('../controller/cts_access_repo');
 const formatfile = require('../controller/ctr_format_file');
+const laporananalis = require('../controller/ctr_laporan_analisis');
 
 module.exports = (app)=>{
 
@@ -63,4 +64,10 @@ module.exports = (app)=>{
     app.route('/api/formatfile/delete/:id').get(formatfile.delete);
     app.route('/api/formatfile/index/:id').get(formatfile.index);
     /* API Format File */
+
+    /* APi Laporan Analisi */
+
+    app.route('/api/laporananalis/:iduser/:idperiod/:flag/:period/:dpt').get(laporananalis.List);
+
+    /* APi Laporan Analisi */
 }
