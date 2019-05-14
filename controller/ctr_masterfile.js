@@ -24,8 +24,9 @@ exports.listuser = (req , res)=>{
 
 exports.save = (req , res) =>{
     let { name , jenis , ket , user ,divisi , sbu ,nodoc} = req.body;
-    let id  = global.idRecord('MST');
-    let docname = `${nodoc}-${name}`;
+    let id  = jenis+global.idRecord('MST');
+    let repository = `${nodoc}-${name}`;
+    let docname = repository.trim();
 
     db('tbdc_repository')
     .insert({
@@ -57,12 +58,12 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-                    global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                        if (err) {
-                            console.log(true)
-                        }
-                    })
-                    //mkdir(global.urlfile+docname)
+                //    global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
+                //         if (err) {
+                //             console.log(true)
+                //         }
+                //     })
+                mkdir(global.urlfile+docname)
                     res.json(true)
             })
 
@@ -81,12 +82,12 @@ exports.save = (req , res) =>{
                 })
            }
            return db('tbdc_template_repository').insert(data).then(()=> {
-                    global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                        if (err) {
-                            console.log(true)
-                        }
-                    })
-                    //mkdir(global.urlfile+docname)
+                    // global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
+                    //     if (err) {
+                    //         console.log(true)
+                    //     }
+                    // })
+                    mkdir(global.urlfile+docname)
                     res.json(true)
            });
             
@@ -100,12 +101,12 @@ exports.save = (req , res) =>{
                         dtentryby: new Date()
                    })
                    .then(()=>{
-                        global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                            if (err) {
-                                global.authAzure.createDirectoryIfNotExists
-                            }
-                        })
-                        //mkdir(global.urlfile+docname)
+                        // global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
+                        //     if (err) {
+                        //         global.authAzure.createDirectoryIfNotExists
+                        //     }
+                        // })
+                        mkdir(global.urlfile+docname)
                         res.json(true)
                    })
         }else if (jenis === 'Tahunan') {
@@ -118,12 +119,12 @@ exports.save = (req , res) =>{
                  dtentryby: new Date()
             })
             .then(()=>{
-                global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                    if (err) {
-                        console.log(true)
-                    }
-                })
-                //mkdir(global.urlfile+docname)
+                // global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
+                //     if (err) {
+                //         console.log(true)
+                //     }
+                // })
+                mkdir(global.urlfile+docname)
                 res.json(true)
             })  
         }else if(jenis === 'Insidentil' ){
@@ -141,12 +142,12 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-                    global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                        if (err) {
-                            console.log(true)
-                        }
-                    })
-                    //mkdir(global.urlfile+docname)
+                    // global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
+                    //     if (err) {
+                    //         console.log(true)
+                    //     }
+                    // })
+                    mkdir(global.urlfile+docname)
                     res.json(true)
             })   
         }

@@ -68,6 +68,8 @@ module.exports = (app)=>{
     /* APi Laporan Analisi */
 
     app.route('/api/laporananalis/:iduser/:idperiod/:flag/:period/:dpt').get(laporananalis.List);
+    app.route('/api/laporananalis/:flag/:idrepo/:idperiod').get(laporananalis.Listdetail);
 
     /* APi Laporan Analisi */
+
 }

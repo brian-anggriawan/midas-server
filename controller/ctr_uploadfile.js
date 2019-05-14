@@ -55,7 +55,7 @@ exports.save = (req , res)  =>{
     let file = req.files.file;
     let fileOrinalName = file.name;
     let = { description , template , idperiod ,period, directory, nodoc ,repo , blob ,user} = req.body;
-
+    
     db.select('*').from('vw_file')
       .where({
           id_template: template,
@@ -71,13 +71,16 @@ exports.save = (req , res)  =>{
              nilai = count + 1;
          }
 
-         let filename = nodoc+'-'+repo+'-'+period+'-'+nilai+path.extname(fileOrinalName);
-         file.mv(`./File/${filename}`)
-         //let DirectoryFile = global.urlfile+directory+'\\'+filename;
+         let filetrim = nodoc+'-'+repo+'-'+period+'-'+nilai+path.extname(fileOrinalName);
+         let filename = filetrim.trim();
+         //file.mv(`./File/${filename}`)
+         let DirectoryFile = global.urlfile+directory+'\\'+filename;
+         let idrecord = global.idRecord('fl')+user;
 
+       
          return db('tbdc_file')
                 .insert({
-                    vcidfile: global.idRecord('FL'),
+                    vcidfile: idrecord.trim(),
                     vcidtmprepo: template,
                     dtupload: new Date(),
                     vcidaccperiod: idperiod,
@@ -90,13 +93,15 @@ exports.save = (req , res)  =>{
                     dtentryby: new Date(),
                     inflagactive: 1
                 }).then(data =>{
-                    global.authAzure.createFileFromLocalFile('midas',directory,filename,`./File/${filename}` ,(err ,result , response)=>{
-                        if (err) {
-                            console.log(err)
-                        }
+                    // global.authAzure.createFileFromLocalFile('midas',directory,filename,`./File/${filename}` ,(err ,result , response)=>{
+                    //     if (err) {
+                    //         console.log(err)
+                    //     }
 
-                        fs.unlinkSync(`./File/${filename}`)
-                    })  
+                    //     fs.unlinkSync(`./File/${filename}`)
+                    // })  
+                     file.mv(DirectoryFile)
+                    //res.json(true)
                     
                 }).catch(err =>{
                     console.log(err)
@@ -140,14 +145,14 @@ exports.Downloadfile = (req , res) => {
       .where('id_file' ,id)
       .then(data =>{
           if (data) {
-            //res.download(global.urlfile+data[0].PATH)
-            let col = data[0];
-            global.authAzure.getFileToLocalFile('midas',col.DIRECTORY,col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
-                if (err) {
-                    console.log(err)
-                }
-                res.download(`./File/${col.FILE_NAME}`)  
-            })
+            res.download(global.urlfile+data[0].PATH)
+            // let col = data[0];
+            // global.authAzure.getFileToLocalFile('midas',col.DIRECTORY,col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
+            //     if (err) {
+            //         console.log(err)
+            //     }
+            //     res.download(`./File/${col.FILE_NAME}`)  
+            // })
           }
       })
 }
@@ -156,13 +161,14 @@ exports.Downloadfile = (req , res) => {
 exports.delete = (req , res)=>{
     let {id} = req.params;
 
-    db.select('*').from('vw_file')
-      .where('id_file' , id)
-      .then(data =>{
-          if (data) {
-             let col = data[0];
-             fs.unlinkSync(`./File/${col.FILE_NAME}`) 
-             res.json(true)
-          }
-      })
+    // db.select('*').from('vw_file')
+    //   .where('id_file' , id)
+    //   .then(data =>{
+    //       if (data) {
+    //          let col = data[0];
+    //          fs.unlinkSync(`./File/${col.FILE_NAME}`) 
+    //          res.json(true)
+    //       }
+    //   })
+    res.json(true)
 }

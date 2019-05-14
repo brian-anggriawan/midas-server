@@ -35,13 +35,13 @@ exports.save =  (req , res) =>{
     let {  name , blob , idrepo , iduser} = req.body;
     let files = req.files.files;
 
-    let id = global.idRecord('FMFILE');
-
-    files.mv(`./File/${name}`)
+    let id = global.idRecord('FMFILE')+iduser;
+    let DirectoryFile = global.urlfile+'format-file\\'+id+path.extname(name);
+    
 
     return db('tbdc_format_file')
             .insert({
-                vcidformatfile: id,
+                vcidformatfile: id.trim(),
                 vcidrepo: idrepo,
                 vmxfile: blob,
                 vcfilename: id+path.extname(name),
@@ -51,13 +51,14 @@ exports.save =  (req , res) =>{
                 dtentryby: new Date(),
                 inflagactive: 1
             }).then(()=>{
-                global.authAzure.createFileFromLocalFile('midas','format-laporan',id+path.extname(name),`./File/${name}` ,(err ,result , response)=>{
-                    if (err) {
-                        console.log(err)
-                    }
+                // global.authAzure.createFileFromLocalFile('midas','format-laporan',id+path.extname(name),`./File/${name}` ,(err ,result , response)=>{
+                //     if (err) {
+                //         console.log(err)
+                //     }
 
-                    fs.unlinkSync(`./File/${name}`)
-                })  
+                //     fs.unlinkSync(`./File/${name}`)
+                // })  
+                files.mv(DirectoryFile)
                 res.json(true)    
             })  
 }
@@ -95,14 +96,14 @@ exports.Downloadfile = (req , res) => {
       .where('id_format' ,id)
       .then(data =>{
           if (data) {
-            //res.download(global.urlfile+data[0].PATH)
-            let col = data[0];
-            global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
-                if (err) {
-                    console.log(err)
-                }
-                res.download(`./File/${col.FILE_NAME}`)  
-            })
+            res.download(global.urlfile+data[0].PATH)
+            // let col = data[0];
+            // global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
+            //     if (err) {
+            //         console.log(err)
+            //     }
+            //     res.download(`./File/${col.FILE_NAME}`)  
+            // })
           }
       })
 }
@@ -117,29 +118,31 @@ exports.Downloadfile2 = (req , res)=>{
       })
       .then(data =>{
           if (data) {
-            //res.download(global.urlfile+data[0].PATH)
-            let col = data[0];
-            global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
-                if (err) {
-                    console.log(err)
-                }
-                res.download(`./File/${col.FILE_NAME}`)  
-            })
+            res.download(global.urlfile+data[0].PATH)
+            // let col = data[0];
+            // global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
+            //     if (err) {
+            //         console.log(err)
+            //     }
+            //     res.download(`./File/${col.FILE_NAME}`)  
+            // })
           }
       })
 
 }
 
 exports.delete = (req , res)=>{
-    let {id} = req.params;
+    // let {id} = req.params;
 
-    db.select('*').from('vw_list_format_laporan')
-      .where('id_format' , id)
-      .then(data =>{
-          if (data) {
-             let col = data[0];
-             fs.unlinkSync(`./File/${col.FILE_NAME}`) 
-             res.json(true)
-          }
-      })
+    // db.select('*').from('vw_list_format_laporan')
+    //   .where('id_format' , id)
+    //   .then(data =>{
+    //       if (data) {
+    //          let col = data[0];
+    //          fs.unlinkSync(`./File/${col.FILE_NAME}`) 
+    //          res.json(true)
+    //       }
+    //   })
+
+    res.json(true)
 }

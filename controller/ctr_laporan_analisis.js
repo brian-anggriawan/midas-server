@@ -36,3 +36,21 @@ exports.List = (req , res)=>{
     }
     
 }
+
+exports.Listdetail = (req , res)=>{
+    let {flag , idperiod , idrepo } = req.params;
+
+        new sql.ConnectionPool(global.configsp).connect().then(pool =>{
+            return pool.request().query(`
+                EXEC  [dbo].[detail_laporan_analis] 
+                @inflag = ${flag},
+                @idrepo = ${idrepo},
+                @idperiod = ${idperiod};
+            `).then(row =>{
+                let  data = row.recordset;
+                res.json(data)
+            })
+        })  
+    
+
+}
