@@ -47,7 +47,7 @@ module.exports = (app)=>{
     /* API User repo */
 
     app.route('/api/accessrepo/:id').get(accessrepo.listAccess);
-    app.route('/api/accessrepo/repo/:id').get(accessrepo.listRepo);
+    app.route('/api/accessrepo/repo/:id/:user').get(accessrepo.listRepo);
     app.route('/api/accessrepo').post(accessrepo.save);
     app.route('/api/accessrepo').delete(accessrepo.delete);
 
