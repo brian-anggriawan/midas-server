@@ -1,6 +1,6 @@
-const db = require('../koneksi/koneksi'),
-      global = require('../global_function/global_function'),
-      mkdir = require('mkdirp');
+const db = require('../koneksi/koneksi');
+const { idRecord , urlfile , authAzure } = require('../global_function/global_function');
+const mkdir = require('mkdirp');
 
 exports.index = (req , res) =>{
     //let {user}  = req.params
@@ -24,7 +24,7 @@ exports.listuser = (req , res)=>{
 
 exports.save = (req , res) =>{
     let { name , jenis , ket , user ,divisi , sbu ,nodoc} = req.body;
-    let id  = jenis+global.idRecord('MST');
+    let id  = idRecord('mst');
     let repository = `${nodoc}-${name}`;
     let docname = repository.trim();
 
@@ -50,7 +50,7 @@ exports.save = (req , res) =>{
 
             for(i; i <= b; i++){
                 data.push({
-                    vcidtmprepo: id+global.idRecord('TMPREPO')+i,
+                    vcidtmprepo: idRecord('tmprepo')+i,
                     vcidrepo: id,
                     vcjenis: `HEK ${i}`,
                     vcentryby: user,
@@ -58,13 +58,8 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-                //    global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                //         if (err) {
-                //             console.log(true)
-                //         }
-                //     })
-                mkdir(global.urlfile+docname)
-                    res.json(true)
+                mkdir(`${urlfile}\\mtg\\${docname}`)
+                return res.json(true)
             })
 
         }else if (jenis==='Mingguan') {
@@ -74,7 +69,7 @@ exports.save = (req , res) =>{
 
            for(i; i <= b; i++){
                 data.push({
-                    vcidtmprepo: id+global.idRecord('TMPREPO')+i,
+                    vcidtmprepo: idRecord('tmprepo')+i,
                     vcidrepo: id,
                     vcjenis: `Minggu ${i}`,
                     vcentryby: user,
@@ -82,50 +77,35 @@ exports.save = (req , res) =>{
                 })
            }
            return db('tbdc_template_repository').insert(data).then(()=> {
-                    // global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                    //     if (err) {
-                    //         console.log(true)
-                    //     }
-                    // })
-                    mkdir(global.urlfile+docname)
-                    res.json(true)
+                    mkdir(`${urlfile}\\mtg\\${docname}`)
+                    return res.json(true)
            });
             
         }else if(jenis==='Bulanan'){
             return db('tbdc_template_repository')
                    .insert({
-                        vcidtmprepo: id+global.idRecord('TMPREPO'),
+                        vcidtmprepo: idRecord('tmprepo'),
                         vcidrepo: id,
                         vcjenis: 'Bulan',
                         vcentryby: user,
                         dtentryby: new Date()
                    })
                    .then(()=>{
-                        // global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                        //     if (err) {
-                        //         global.authAzure.createDirectoryIfNotExists
-                        //     }
-                        // })
-                        mkdir(global.urlfile+docname)
-                        res.json(true)
+                        mkdir(`${urlfile}\\mtg\\${docname}`)
+                        return res.json(true)
                    })
         }else if (jenis === 'Tahunan') {
             return db('tbdc_template_repository')
             .insert({
-                 vcidtmprepo: id+global.idRecord('TMPREPO'),
+                 vcidtmprepo: idRecord('tmprepo'),
                  vcidrepo: id,
                  vcjenis: 'Tahun',
                  vcentryby: user,
                  dtentryby: new Date()
             })
             .then(()=>{
-                // global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                //     if (err) {
-                //         console.log(true)
-                //     }
-                // })
-                mkdir(global.urlfile+docname)
-                res.json(true)
+                mkdir(`${urlfile}\\mtg\\${docname}`)
+                return res.json(true)
             })  
         }else if(jenis === 'Insidentil' ){
             let i = 1;
@@ -134,7 +114,7 @@ exports.save = (req , res) =>{
 
             for(i; i <= b; i++){
                 data.push({
-                    vcidtmprepo: id+global.idRecord('TMPREPO')+i,
+                    vcidtmprepo: idRecord('tmprepo')+i,
                     vcidrepo: id,
                     vcjenis: `HEK ${i}`,
                     vcentryby: user,
@@ -142,13 +122,8 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-                    // global.authAzure.createDirectoryIfNotExists('midas',docname , (err , result , reponse)=>{
-                    //     if (err) {
-                    //         console.log(true)
-                    //     }
-                    // })
-                    mkdir(global.urlfile+docname)
-                    res.json(true)
+                    mkdir(`${urlfile}\\mtg\\${docname}`)
+                    return res.json(true)
             })   
         }
     })

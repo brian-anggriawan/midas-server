@@ -1,15 +1,15 @@
-const db = require('../koneksi/koneksi'),
-      path = require('path'),
-      sql = require('mssql'),
-      fs = require('fs'),
-      global = require('../global_function/global_function');
+const db = require('../koneksi/koneksi');
+const path = require('path');
+const  sql = require('mssql');
+const { configsp  , idRecord , authAzure , urlfile}   = require('../global_function/global_function');
+const fs = require('fs');
       
       
 
 exports.index = (req , res) =>{
     let { idrepo , idperiod } = req.params;
     
-    new sql.ConnectionPool(global.configsp).connect().then(pool =>{
+    new sql.ConnectionPool(configsp).connect().then(pool =>{
         return pool.request().query(`
                 EXEC [dbo].[List_Group_File] 
                 @idrepo = ${idrepo},
@@ -39,7 +39,7 @@ exports.listdetailfile = (req , res)=>{
 exports.listRepository = (req , res)=>{
     let {user , idperiod} = req.params;
 
-    new sql.ConnectionPool(global.configsp).connect().then(pool =>{
+    new sql.ConnectionPool(configsp).connect().then(pool =>{
         return pool.request().query(`EXEC [dbo].[List_Access_Repository] 
                                             @iduser = ${user},
                                             @period = ${idperiod}`).then(result =>{
@@ -73,9 +73,12 @@ exports.save = (req , res)  =>{
 
          let filetrim = nodoc+'-'+repo+'-'+period+'-'+nilai+path.extname(fileOrinalName);
          let filename = filetrim.trim();
-         //file.mv(`./File/${filename}`)
-         let DirectoryFile = global.urlfile+directory+'\\'+filename;
-         let idrecord = global.idRecord('fl')+user;
+         file.mv(`./File/${filename}`);
+         let DirectoryFile = urlfile+'mtg\\'+directory+'\\'+filename;
+         let idrecord = idRecord('fl')+user;
+
+         console.l
+
 
        
          return db('tbdc_file')
@@ -92,23 +95,22 @@ exports.save = (req , res)  =>{
                     vcentryby: user,
                     dtentryby: new Date(),
                     inflagactive: 1
-                }).then(data =>{
-                    // global.authAzure.createFileFromLocalFile('midas',directory,filename,`./File/${filename}` ,(err ,result , response)=>{
-                    //     if (err) {
-                    //         console.log(err)
-                    //     }
+                }).then(() =>{
+                    authAzure.createBlockBlobFromLocalFile('midas',`mtg/${directory}/${filename}`, `./File/${filename}` ,(err ,result , response)=>{
+                        if (err) {
+                            console.log(err)
+                        }
 
-                    //     fs.unlinkSync(`./File/${filename}`)
-                    // })  
-                     file.mv(DirectoryFile)
-                    //res.json(true)
-                    
+                        fs.unlinkSync(`./File/${filename}`);
+                        file.mv(DirectoryFile)    
+                    })    
                 }).catch(err =>{
                     console.log(err)
                 })
-       
+            
       })  
-      res.json(true)
+
+      res.json(true);
 }
 
 exports.updateinflag = (req , res) =>{
@@ -145,7 +147,7 @@ exports.Downloadfile = (req , res) => {
       .where('id_file' ,id)
       .then(data =>{
           if (data) {
-            res.download(global.urlfile+data[0].PATH)
+            res.download(urlfile+'mtg\\'+data[0].PATH)
             // let col = data[0];
             // global.authAzure.getFileToLocalFile('midas',col.DIRECTORY,col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
             //     if (err) {

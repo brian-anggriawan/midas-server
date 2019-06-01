@@ -1,6 +1,6 @@
 const masterFile = require('../controller/ctr_masterfile');
 const uploadFile = require('../controller/ctr_uploadfile');
-const accessmenu = require('../controller/ctr_access_menu');
+const { accessMenu } = require('../controller/ctr_access_menu');
 const global = require('../controller/ctr_global');
 const accessrepo = require('../controller/cts_access_repo');
 const formatfile = require('../controller/ctr_format_file');
@@ -10,7 +10,7 @@ module.exports = (app)=>{
 
 
     /* Access Menu */
-    app.route('/api/accessmenu').get(accessmenu.accessMenu);
+    app.route('/api/accessmenu').get(accessMenu);
 
     /* Access Menu */
 

@@ -10,7 +10,6 @@ const express = require('express'),
         secret: 'brian wahyu'
       }),
       mugen = require('./koneksi/con_general'),
-      sql = require('./koneksi/koneksi'),
       cors = require('cors');
 
 
@@ -60,7 +59,7 @@ app.get('/', (req , res)=>{
     res.json('Selamat Datang Di Rest API Midas')
 });
 
-//app.all('/api/*' , jwtmw);
+app.all('/api/*' , jwtmw);
 
 app.use((err , req , res , next)=>{
     if (err.name === 'UnauthorizedError') {

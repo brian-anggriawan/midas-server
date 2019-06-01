@@ -1,5 +1,5 @@
 let db = require('../koneksi/koneksi');
-let global = require('../global_function/global_function');
+let { configsp , idRecord} =  require('../global_function/global_function');
 let sql = require('mssql');
 
 
@@ -23,7 +23,7 @@ exports.listRepo = (req , res) =>{
     //       res.json(data)
     //   })
 
-      new sql.ConnectionPool(global.configsp).connect().then(pool =>{
+      new sql.ConnectionPool(configsp).connect().then(pool =>{
         return pool.request().query(`
                 EXEC [dbo].[List_Pick_Repository] 
                 @iddpt = ${id},
@@ -55,7 +55,7 @@ exports.save = (req , res) =>{
 
     return db('tbapp_access_repo')
            .insert({
-            vcidaccrepo: global.idRecord('ACCREPO'),
+            vcidaccrepo: idRecord('ACCREPO'),
             vcidrepo: idrepo,
             vciduser: iduser,
             dtentryby: new Date()

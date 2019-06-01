@@ -1,7 +1,7 @@
-const db = require('../koneksi/koneksi'),
-      path = require('path'),
-      fs = require('fs'),
-      global = require('../global_function/global_function');
+const db = require('../koneksi/koneksi');
+const path = require('path');
+const { urlfile , idRecord , authAzure} = require('../global_function/global_function');
+const fs = require('fs');
 
 
 exports.listRepo = async (req , res)=>{
@@ -32,11 +32,11 @@ exports.index = async (req , res)=>{
 }
 
 exports.save =  (req , res) =>{
-    let {  name , blob , idrepo , iduser} = req.body;
+    let {  name , blob , idrepo , iduser , dir} = req.body;
     let files = req.files.files;
 
-    let id = global.idRecord('FMFILE')+iduser;
-    let DirectoryFile = global.urlfile+'format-file\\'+id+path.extname(name);
+    let id = idRecord('fmfile')+iduser;
+    let DirectoryFile = urlfile+'format-file\\'+id+path.extname(name);
     
 
     return db('tbdc_format_file')
@@ -51,14 +51,14 @@ exports.save =  (req , res) =>{
                 dtentryby: new Date(),
                 inflagactive: 1
             }).then(()=>{
-                // global.authAzure.createFileFromLocalFile('midas','format-laporan',id+path.extname(name),`./File/${name}` ,(err ,result , response)=>{
-                //     if (err) {
-                //         console.log(err)
-                //     }
+                authAzure.createBlockBlobFromLocalFile('midas',`format-file/${id+path.extname(name)}`,`./File/${name}` ,(err ,result , response)=>{
+                    if (err) {
+                        console.log(err)
+                    }
 
-                //     fs.unlinkSync(`./File/${name}`)
-                // })  
-                files.mv(DirectoryFile)
+                    fs.unlinkSync(`./File/${name}`)
+                })  
+                //files.mv(DirectoryFile)
                 res.json(true)    
             })  
 }
@@ -96,7 +96,7 @@ exports.Downloadfile = (req , res) => {
       .where('id_format' ,id)
       .then(data =>{
           if (data) {
-            res.download(global.urlfile+data[0].PATH)
+            res.download(urlfile+'mtg\\'+data[0].PATH)
             // let col = data[0];
             // global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
             //     if (err) {
@@ -118,7 +118,7 @@ exports.Downloadfile2 = (req , res)=>{
       })
       .then(data =>{
           if (data) {
-            res.download(global.urlfile+data[0].PATH)
+            res.download(urlfile+'mtg\\'+data[0].PATH)
             // let col = data[0];
             // global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
             //     if (err) {

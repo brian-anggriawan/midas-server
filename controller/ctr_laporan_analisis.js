@@ -1,12 +1,12 @@
-const sql = require('mssql'),
-      global = require('../global_function/global_function');
+const sql = require('mssql');
+const { configsp }  = require('../global_function/global_function');
 
 
 exports.List = (req , res)=>{
     let { iduser , idperiod , flag , period  , dpt} = req.params;
 
     if (flag === '2') {
-        new sql.ConnectionPool(global.configsp).connect().then(pool =>{
+        new sql.ConnectionPool(configsp).connect().then(pool =>{
             return pool.request().query(`
                     EXEC [dbo].[Laporan_Analisis] 
                     @inflag = 1,
@@ -20,7 +20,7 @@ exports.List = (req , res)=>{
             })
         }) 
     }else{
-        new sql.ConnectionPool(global.configsp).connect().then(pool =>{
+        new sql.ConnectionPool(configsp).connect().then(pool =>{
             return pool.request().query(`
                     EXEC [dbo].[Laporan_Analisis] 
                     @inflag = 2,
