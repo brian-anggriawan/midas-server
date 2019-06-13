@@ -5,9 +5,22 @@ const global = require('../controller/ctr_global');
 const accessrepo = require('../controller/cts_access_repo');
 const formatfile = require('../controller/ctr_format_file');
 const laporananalis = require('../controller/ctr_laporan_analisis');
+const user = require('../controller/ctr_user');
 
 module.exports = (app)=>{
 
+
+    /* User */
+
+    app.route('/cekuser/:name').get(user.cekUser);
+    app.route('/api/cekuser/:name').get(user.cekUser);
+    app.route('/daftar').post(user.daftar);
+    app.route('/api/daftarauth').post(user.daftarAuth);
+    app.route('/api/usersby/:dpt').get(user.userbyDivision);
+    app.route('/api/deluserbyid').delete(user.deletebyId);
+    
+
+    /* User */
 
     /* Access Menu */
     app.route('/api/accessmenu').get(accessMenu);
@@ -16,8 +29,10 @@ module.exports = (app)=>{
 
     /* API Global */
 
-    app.route('/api/sbu').get(global.sbu)
-    app.route('/api/dpt/:id').get(global.dpt)
+    app.route('/api/sbu').get(global.sbu);
+    app.route('/api/dpt/:id').get(global.dpt);
+    app.route('/sbu').get(global.sbu);
+    app.route('/dpt/:id').get(global.dpt);
     app.route('/api/userFilter/:sbu/:dpt').get(global.userFilter);
     app.route('/api/accperiod').get(global.accperiod);
     app.route('/api/periodtoday').get(global.periodtoday);

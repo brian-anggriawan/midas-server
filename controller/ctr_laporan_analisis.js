@@ -40,7 +40,7 @@ exports.List = (req , res)=>{
 exports.Listdetail = (req , res)=>{
     let {flag , idperiod , idrepo } = req.params;
 
-        new sql.ConnectionPool(global.configsp).connect().then(pool =>{
+        new sql.ConnectionPool(configsp).connect().then(pool =>{
             return pool.request().query(`
                 EXEC  [dbo].[detail_laporan_analis] 
                 @inflag = ${flag},
