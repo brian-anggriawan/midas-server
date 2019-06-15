@@ -1,5 +1,6 @@
 const azure = require('azure-storage');
 const uid = require('cuid');
+const sambaClient = require('samba-client');
 
 exports.idRecord = (prefix) =>{
     //let time = new Date(),
@@ -20,7 +21,36 @@ exports.formatDate = (date) => {
     return [year, month, day].join('-');
 }
 
-exports.urlfile = '\\\\192.168.40.225\\midas-doc\\';
+exports.urlfile = ()=>{
+    let os = process.platform;
+
+    if (os === 'win32' || os === 'win64' ) {
+        return '\\\\192.168.40.225\\midas-doc\\';
+    }else if( os === 'linux'){
+        return '//192.168.40.225/midas-doc';
+    }else{
+        console.log('OS Tidak Terdaftar')
+    }
+    
+} 
+
+exports.smbClient = new sambaClient({
+    address: this.urlfile()
+  
+});
+
+exports.replace = ( str )=>{
+
+  var res = str.replace(/ /g,'-' );
+  var res1 = res.replace(/--|---|----|-----|------/g,'-' );
+  var res2 = res1.replace(/--|---|----|-----|------/g,'-' );
+  var res3 = res2.replace(/--|---|----|-----|------/g,'-' );
+  var res4 = res3.replace(/--|---|----|-----|------/g,'-' );
+  var res5 = res4.replace(/--|---|----|-----|------/g,'-' );
+
+  return res5;
+}
+
 
 
 exports.configsp = {

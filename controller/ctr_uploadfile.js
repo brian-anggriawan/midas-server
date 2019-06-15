@@ -1,7 +1,7 @@
 const db = require('../koneksi/koneksi');
 const path = require('path');
 const  sql = require('mssql');
-const { configsp  , idRecord , authAzure , urlfile}   = require('../global_function/global_function');
+const { configsp  , idRecord , authAzure , urlfile , replace}   = require('../global_function/global_function');
 const fs = require('fs');
       
       
@@ -54,7 +54,7 @@ exports.save = (req , res)  =>{
 
     let file = req.files.file;
     let fileOrinalName = file.name;
-    let = { description , template , idperiod ,period, directory, nodoc ,repo , blob ,user} = req.body;
+    let = { description , template , idperiod ,period, directory, nodoc ,repo , blob ,user , sbu , dpt} = req.body;
     
     db.select('*').from('vw_file')
       .where({
@@ -72,12 +72,10 @@ exports.save = (req , res)  =>{
          }
 
          let filetrim = nodoc+'-'+repo+'-'+period+'-'+nilai+path.extname(fileOrinalName);
-         let filename = filetrim.trim();
+         let filename = replace(filetrim.trim());
          file.mv(`./File/${filename}`);
-         let DirectoryFile = urlfile+'mtg\\'+directory+'\\'+filename;
+         let DirectoryFile = urlfile()+'mtg\\'+replace(sbu)+'\\'+replace(dpt)+'\\'+directory+'\\'+filename;
          let idrecord = idRecord('fl')+user;
-
-         console.l
 
 
        
@@ -96,7 +94,7 @@ exports.save = (req , res)  =>{
                     dtentryby: new Date(),
                     inflagactive: 1
                 }).then(() =>{
-                    authAzure.createBlockBlobFromLocalFile('midas',`mtg/${directory}/${filename}`, `./File/${filename}` ,(err ,result , response)=>{
+                    authAzure.createBlockBlobFromLocalFile('midas',`mtg/${replace(sbu)}/${replace(dpt)}/${directory}/${filename}`, `./File/${filename}` ,(err ,result , response)=>{
                         if (err) {
                             console.log(err)
                         }

@@ -1,12 +1,12 @@
 const db = require('../koneksi/koneksi');
-const { idRecord , urlfile , authAzure } = require('../global_function/global_function');
+const { idRecord , smbClient , replace , urlfile } = require('../global_function/global_function');
 const mkdir = require('mkdirp');
 
+
+
 exports.index = (req , res) =>{
-    //let {user}  = req.params
 
     db.select('*').from('vw_list_repository')
-      //.where('vcentryby',user)
       .then(data =>{
         res.json(data);
     });
@@ -23,10 +23,13 @@ exports.listuser = (req , res)=>{
 }
 
 exports.save = (req , res) =>{
-    let { name , jenis , ket , user ,divisi , sbu ,nodoc} = req.body;
+    let { name , jenis , ket , user ,divisi , sbu ,nodoc , sbuname , divname} = req.body;
     let id  = idRecord('mst');
     let repository = `${nodoc}-${name}`;
-    let docname = repository.trim();
+    let docname = replace(repository.trim());
+    let os = process.platform;
+    let dirWin = `\\mtg\\${replace(sbuname)}\\${replace(divname)}\\`;
+
 
     db('tbdc_repository')
     .insert({
@@ -58,8 +61,16 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-                mkdir(`${urlfile}\\mtg\\${docname}`)
-                return res.json(true)
+
+                if (os === 'win32' || os ==='win64') {
+                    mkdir(`${urlfile()}${dirWin}${docname}`);
+                 }else if(os ==='linux'){
+                    smbClient.mkdir(`mtg/${docname}` ,function(err){
+                        return console.log(err)
+                    });
+                 }
+ 
+                 return res.json(true)
             })
 
         }else if (jenis==='Mingguan') {
@@ -77,8 +88,15 @@ exports.save = (req , res) =>{
                 })
            }
            return db('tbdc_template_repository').insert(data).then(()=> {
-                    mkdir(`${urlfile}\\mtg\\${docname}`)
-                    return res.json(true)
+                if (os === 'win32' || os ==='win64') {
+                    mkdir(`${urlfile()}${dirWin}${docname}`);
+                }else if(os ==='linux'){
+                    smbClient.mkdir(`mtg/${docname}` ,function(err){
+                        return console.log(err)
+                    });
+                }
+
+                return res.json(true)
            });
             
         }else if(jenis==='Bulanan'){
@@ -91,7 +109,14 @@ exports.save = (req , res) =>{
                         dtentryby: new Date()
                    })
                    .then(()=>{
-                        mkdir(`${urlfile}\\mtg\\${docname}`)
+                        if (os === 'win32' || os ==='win64') {
+                            mkdir(`${urlfile()}${dirWin}${docname}`);
+                        }else if(os ==='linux'){
+                            smbClient.mkdir(`mtg/${docname}` ,function(err){
+                                return console.log(err)
+                            });
+                        }
+        
                         return res.json(true)
                    })
         }else if (jenis === 'Tahunan') {
@@ -104,8 +129,15 @@ exports.save = (req , res) =>{
                  dtentryby: new Date()
             })
             .then(()=>{
-                mkdir(`${urlfile}\\mtg\\${docname}`)
-                return res.json(true)
+                if (os === 'win32' || os ==='win64') {
+                    mkdir(`${urlfile()}${dirWin}${docname}`);
+                 }else if(os ==='linux'){
+                    smbClient.mkdir(`mtg/${docname}` ,function(err){
+                        return console.log(err)
+                    });
+                 }
+ 
+                 return res.json(true)
             })  
         }else if(jenis === 'Insidentil' ){
             let i = 1;
@@ -122,8 +154,15 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-                    mkdir(`${urlfile}\\mtg\\${docname}`)
-                    return res.json(true)
+                if (os === 'win32' || os ==='win64') {
+                    mkdir(`${urlfile()}${dirWin}${docname}`);
+                 }else if(os ==='linux'){
+                    smbClient.mkdir(`mtg/${docname}` ,function(err){
+                        return console.log(err)
+                    });
+                 }
+ 
+                 return res.json(true)
             })   
         }
     })

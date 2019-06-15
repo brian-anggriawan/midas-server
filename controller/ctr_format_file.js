@@ -36,8 +36,9 @@ exports.save =  (req , res) =>{
     let files = req.files.files;
 
     let id = idRecord('fmfile')+iduser;
-    let DirectoryFile = urlfile+'format-file\\'+id+path.extname(name);
+    let DirectoryFile = urlfile()+'format-file\\'+id+path.extname(name);
     
+    files.mv(`./File/${name}`);
 
     return db('tbdc_format_file')
             .insert({
@@ -56,10 +57,10 @@ exports.save =  (req , res) =>{
                         console.log(err)
                     }
 
-                    fs.unlinkSync(`./File/${name}`)
+                    fs.unlinkSync(`./File/${name}`);
                 })  
-                //files.mv(DirectoryFile)
-                res.json(true)    
+                files.mv(DirectoryFile);
+                res.json(true);    
             })  
 }
 
@@ -96,7 +97,7 @@ exports.Downloadfile = (req , res) => {
       .where('id_format' ,id)
       .then(data =>{
           if (data) {
-            res.download(urlfile+'mtg\\'+data[0].PATH)
+            res.download(urlfile()+data[0].PATH)
             // let col = data[0];
             // global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
             //     if (err) {
@@ -118,7 +119,7 @@ exports.Downloadfile2 = (req , res)=>{
       })
       .then(data =>{
           if (data) {
-            res.download(urlfile+'mtg\\'+data[0].PATH)
+            res.download(urlfile()+data[0].PATH)
             // let col = data[0];
             // global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
             //     if (err) {
