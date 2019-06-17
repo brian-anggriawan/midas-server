@@ -54,7 +54,7 @@ exports.save = (req , res)  =>{
 
     let file = req.files.file;
     let fileOrinalName = file.name;
-    let = { description , template , idperiod ,period, directory, nodoc ,repo , blob ,user , sbu , dpt} = req.body;
+    let = { description , template , idperiod ,period, directory, nodoc ,repo , blob ,user , sbu , dpt , tmpname} = req.body;
     
     db.select('*').from('vw_file')
       .where({
@@ -71,7 +71,7 @@ exports.save = (req , res)  =>{
              nilai = count + 1;
          }
 
-         let filetrim = nodoc+'-'+repo+'-'+period+'-'+nilai+path.extname(fileOrinalName);
+         let filetrim = nodoc+'-'+repo+'-'+period+'-'+'-'+tmpname+'-'+nilai+path.extname(fileOrinalName);
          let filename = replace(filetrim.trim());
          file.mv(`./File/${filename}`);
          let DirectoryFile = urlfile()+'mtg\\'+replace(sbu)+'\\'+replace(dpt)+'\\'+directory+'\\'+filename;
@@ -145,7 +145,8 @@ exports.Downloadfile = (req , res) => {
       .where('id_file' ,id)
       .then(data =>{
           if (data) {
-            res.download(urlfile+'mtg\\'+data[0].PATH)
+            let hasil = data[0];
+            res.download(`${urlfile()}mtg\\${replace(hasil.SBU)}\\${replace(hasil.DIVISION)}\\${hasil.DIRECTORY}\\${hasil.FILE_NAME}`)
             // let col = data[0];
             // global.authAzure.getFileToLocalFile('midas',col.DIRECTORY,col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
             //     if (err) {
