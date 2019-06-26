@@ -7,6 +7,7 @@ const formatfile = require('../controller/ctr_format_file');
 const laporananalis = require('../controller/ctr_laporan_analisis');
 const user = require('../controller/ctr_user');
 const search = require('../controller/ctr_search_repo');
+const chats = require('../controller/ctr_chats');
 
 module.exports = (app)=>{
 
@@ -94,5 +95,9 @@ module.exports = (app)=>{
     app.route('/api/search/file/:repo').get(search.ListFile);
 
     /* Search Repo */
+
+    /* Chats */
+    app.route('/api/chats/users').get(chats.listUsers)
+    /* Chats */
 
 }
