@@ -6,6 +6,7 @@ const accessrepo = require('../controller/cts_access_repo');
 const formatfile = require('../controller/ctr_format_file');
 const laporananalis = require('../controller/ctr_laporan_analisis');
 const user = require('../controller/ctr_user');
+const search = require('../controller/ctr_search_repo');
 
 module.exports = (app)=>{
 
@@ -86,5 +87,12 @@ module.exports = (app)=>{
     app.route('/api/laporananalis/:flag/:idrepo/:idperiod').get(laporananalis.Listdetail);
 
     /* APi Laporan Analisi */
+
+    /* Search Repo */
+
+    app.route('/api/search/repo/:flag/:dpt').get(search.listReport);
+    app.route('/api/search/file/:repo').get(search.ListFile);
+
+    /* Search Repo */
 
 }
