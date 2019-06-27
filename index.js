@@ -10,6 +10,10 @@ const express = require('express'),
         secret: 'brian wahyu'
       }),
       mugen = require('./koneksi/con_general'),
+      socket = require('socket.io'),
+      serverChats = require('./server_chats/chats'),
+      http = require('http').createServer(app),
+      io = socket(http),
       cors = require('cors');
 
 
@@ -77,8 +81,10 @@ app.use((err , req , res , next)=>{
 
 
 routes(app);
+serverChats(io);
 
-app.listen(port , ()=> {
+
+http.listen(port , ()=> {
     console.log(`Server Berjalan Di Port ${port}`);
 });
 

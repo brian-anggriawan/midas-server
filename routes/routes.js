@@ -97,7 +97,8 @@ module.exports = (app)=>{
     /* Search Repo */
 
     /* Chats */
-    app.route('/api/chats/users').get(chats.listUsers)
+    app.route('/api/chats/users/:id').get(chats.listUsers);
+    app.route('/api/chats/chats/:from/:to').get(chats.listChats);
     /* Chats */
 
 }
