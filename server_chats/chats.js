@@ -21,7 +21,7 @@ module.exports = (io)=>{
 
                         db('tbapp_chat_dt')
                         .insert({
-                            VCIDCHATDT: idRecord(),
+                            VCIDCHATDT: idRecord('chat'),
                             VCIDCHATHD: idhd1,
                             VCIDUSER: msg.FROM_ID,
                             VCMSG: msg.MSG,
@@ -31,7 +31,7 @@ module.exports = (io)=>{
                             console.log('Berhasil Menambahkan Detail 1')
                         })
                     }else{
-                        let idCreate =  idRecord();
+                        let idCreate =  idRecord('chat');
 
                         db('tbapp_chat_hd')
                         .insert({
@@ -42,7 +42,7 @@ module.exports = (io)=>{
                         .then(()=>{
                             db('tbapp_chat_dt')
                             .insert({
-                                VCIDCHATDT: idRecord(),
+                                VCIDCHATDT: idRecord('chat'),
                                 VCIDCHATHD: idCreate,
                                 VCIDUSER: msg.FROM_ID,
                                 VCMSG: msg.MSG,
@@ -64,31 +64,42 @@ module.exports = (io)=>{
 
                             if (count2 > 0) {
                                 let idhd2 = data2[0].VCIDCHATHD;
-        
+                                let read = data2[0].INREAD;
+
                                 db('tbapp_chat_dt')
                                 .insert({
-                                    VCIDCHATDT: idRecord(),
+                                    VCIDCHATDT: idRecord('chat'),
                                     VCIDCHATHD: idhd2,
                                     VCIDUSER: msg.FROM_ID,
                                     VCMSG: msg.MSG,
                                     DTCREATE: msg.DATE
                                 })
                                 .then(()=>{
-                                    console.log('Berhasil Menambahkan Detail 2')
+                                    console.log('Berhasil Menambahkan Detail 2');
+
+                                    db('tbapp_chat_hd')
+                                    .where({
+                                        VCIDCHATHD: idhd2,
+                                    })
+                                    .update({ inread: read + 1 })
+                                    .then(()=>{
+                                        console.log('Berhasil Menambahkan Read');
+                                    })
                                 })
                             }else{
-                                let idCreate =  idRecord();
+                                let idCreate =  idRecord('chat');
         
                                 db('tbapp_chat_hd')
                                 .insert({
                                     VCIDCHATHD: idCreate,
                                     VCFROM: msg.TO_ID,
-                                    VCTO: msg.FROM_ID 
+                                    VCTO: msg.FROM_ID,
+                                    INREAD: 1
                                 })
                                 .then(()=>{
                                     db('tbapp_chat_dt')
                                     .insert({
-                                        VCIDCHATDT: idRecord(),
+                                        VCIDCHATDT: idRecord('chat'),
                                         VCIDCHATHD: idCreate,
                                         VCIDUSER: msg.FROM_ID,
                                         VCMSG: msg.MSG,
