@@ -45,3 +45,9 @@ exports.periodtoday = (req , res) =>{
           res.json(data)
       })
 }
+
+exports.getIp = ( req , res)=>{
+    let ip = req.ip.replace('::','').replace('ffff:' ,'');
+
+    res.json(ip)
+}

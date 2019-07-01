@@ -25,7 +25,8 @@ module.exports = (io)=>{
                             VCIDCHATHD: idhd1,
                             VCIDUSER: msg.FROM_ID,
                             VCMSG: msg.MSG,
-                            DTCREATE: msg.DATE
+                            DTCREATE: msg.DATE,
+                            VCIPCREATE: msg.IP
                         })
                         .then(()=>{
                             console.log('Berhasil Menambahkan Detail 1')
@@ -46,7 +47,8 @@ module.exports = (io)=>{
                                 VCIDCHATHD: idCreate,
                                 VCIDUSER: msg.FROM_ID,
                                 VCMSG: msg.MSG,
-                                DTCREATE: msg.DATE
+                                DTCREATE: msg.DATE,
+                                VCIPCREATE: msg.IP
                             }).then(()=>{
                                 console.log('Berhasil Menambahkan Detail 1')
                             })   
@@ -72,7 +74,8 @@ module.exports = (io)=>{
                                     VCIDCHATHD: idhd2,
                                     VCIDUSER: msg.FROM_ID,
                                     VCMSG: msg.MSG,
-                                    DTCREATE: msg.DATE
+                                    DTCREATE: msg.DATE,
+                                    VCIPCREATE: msg.IP
                                 })
                                 .then(()=>{
                                     console.log('Berhasil Menambahkan Detail 2');
@@ -103,7 +106,8 @@ module.exports = (io)=>{
                                         VCIDCHATHD: idCreate,
                                         VCIDUSER: msg.FROM_ID,
                                         VCMSG: msg.MSG,
-                                        DTCREATE: msg.DATE
+                                        DTCREATE: msg.DATE,
+                                        VCIPCREATE: msg.IP
                                     }).then(()=>{
                                         console.log('Berhasil Menambahkan Detail 2')
                                     })   

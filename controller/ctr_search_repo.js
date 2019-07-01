@@ -23,9 +23,8 @@ exports.ListFile = (req , res)=>{
     let { repo } = req.params;
 
     db.select('*').from('vw_file')
-        .where({ REPO :repo, 
-                 ACTIVE : 1        
-        })
+        .where('REPO','like',`%${repo}%`)
+        .andWhere('ACTIVE' , 1)
         .orderBy('DTUPLOAD' ,'desc')
         .then(data =>{
             res.json(data)

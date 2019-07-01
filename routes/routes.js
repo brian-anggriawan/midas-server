@@ -38,6 +38,7 @@ module.exports = (app)=>{
     app.route('/api/userFilter/:sbu/:dpt').get(global.userFilter);
     app.route('/api/accperiod').get(global.accperiod);
     app.route('/api/periodtoday').get(global.periodtoday);
+    app.route('/api/getip').get(global.getIp);
 
     /* API Global */
 
