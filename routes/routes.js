@@ -103,6 +103,7 @@ module.exports = (app)=>{
     app.route('/api/chats/chats/:from/:to').get(chats.listChats);
     app.route('/api/chats/userchat/:id').get(chats.ListUserChats);
     app.route('/api/chats/updateread').put(chats.updateRead);
+    app.route('/api/chats/deleteuserchat').delete(chats.deleteUserChat)
 
     /* Chats */
 

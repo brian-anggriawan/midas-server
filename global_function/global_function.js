@@ -1,6 +1,5 @@
 const azure = require('azure-storage');
 const uid = require('cuid');
-const sambaClient = require('samba-client');
 
 exports.idRecord = (prefix) =>{
     //let time = new Date(),
@@ -22,22 +21,8 @@ exports.formatDate = (date) => {
 }
 
 exports.urlfile = ()=>{
-    let os = process.platform;
-
-    if (os === 'win32' || os === 'win64' ) {
-        return '\\\\192.168.40.225\\midas-doc\\';
-    }else if( os === 'linux'){
-        return '//192.168.40.225/midas-doc';
-    }else{
-        console.log('OS Tidak Terdaftar')
-    }
-    
+    return '\\\\192.168.40.225\\midas-doc\\';
 } 
-
-exports.smbClient = new sambaClient({
-    address: this.urlfile()
-  
-});
 
 exports.replace = ( str )=>{
 

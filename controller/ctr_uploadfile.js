@@ -25,15 +25,26 @@ exports.index = (req , res) =>{
 exports.listdetailfile = (req , res)=>{
     let {idtemplate , idperiod} = req.params;
 
-    db.select('*').from('VW_file')
-      .where({
-          id_template : idtemplate,
-          id_period: idperiod
-      })
-      .orderBy('status','desc')
-      .then(data => {
-          res.json(data);
-      })
+    return db.select('*').from('vw_file')
+            .where('id_template' , idtemplate)
+            .orderBy('status','desc')
+            .then(data =>{
+                let cek =  data[0].JENIS_REPO;
+                    if (cek === 'Tahunan') {
+                        return res.json(data)   
+                    }else{
+                        return db.select('*').from('VW_file')
+                                .where({
+                                    id_template : idtemplate,
+                                    id_period: idperiod
+                                })
+                                .orderBy('status','desc')
+                                .then(data => {
+                                    return res.json(data);
+                                })
+                    }
+
+            })
 }
 
 exports.listRepository = (req , res)=>{

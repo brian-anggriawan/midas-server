@@ -51,3 +51,15 @@ exports.updateRead = ( req , res )=>{
         })
 }
 
+exports.deleteUserChat = (req , res )=>{
+    let { id } = req.body;
+
+    db('tbapp_chat_hd')
+        .where('VCIDCHATHD' , id)
+        .delete()
+        .then(()=>{
+            res.json(true)
+        })
+}
+
+

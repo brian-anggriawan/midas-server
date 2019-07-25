@@ -1,5 +1,5 @@
 const db = require('../koneksi/koneksi');
-const { idRecord , smbClient , replace , urlfile } = require('../global_function/global_function');
+const { idRecord ,replace , urlfile } = require('../global_function/global_function');
 const mkdir = require('mkdirp');
 
 
@@ -27,7 +27,6 @@ exports.save = (req , res) =>{
     let id  = idRecord('mst');
     let repository = `${nodoc}-${name}`;
     let docname = replace(repository.trim());
-    let os = process.platform;
     let dirWin = `\\mtg\\${replace(sbuname)}\\${replace(divname)}\\`;
 
 
@@ -61,16 +60,8 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-
-                if (os === 'win32' || os ==='win64') {
-                    mkdir(`${urlfile()}${dirWin}${docname}`);
-                 }else if(os ==='linux'){
-                    smbClient.mkdir(`mtg/${docname}` ,function(err){
-                        return console.log(err)
-                    });
-                 }
- 
-                 return res.json(true)
+                mkdir(`${urlfile()}${dirWin}${docname}`);
+                return res.json(true)
             })
 
         }else if (jenis==='Mingguan') {
@@ -88,14 +79,7 @@ exports.save = (req , res) =>{
                 })
            }
            return db('tbdc_template_repository').insert(data).then(()=> {
-                if (os === 'win32' || os ==='win64') {
-                    mkdir(`${urlfile()}${dirWin}${docname}`);
-                }else if(os ==='linux'){
-                    smbClient.mkdir(`mtg/${docname}` ,function(err){
-                        return console.log(err)
-                    });
-                }
-
+                mkdir(`${urlfile()}${dirWin}${docname}`);
                 return res.json(true)
            });
             
@@ -109,14 +93,7 @@ exports.save = (req , res) =>{
                         dtentryby: new Date()
                    })
                    .then(()=>{
-                        if (os === 'win32' || os ==='win64') {
-                            mkdir(`${urlfile()}${dirWin}${docname}`);
-                        }else if(os ==='linux'){
-                            smbClient.mkdir(`mtg/${docname}` ,function(err){
-                                return console.log(err)
-                            });
-                        }
-        
+                        mkdir(`${urlfile()}${dirWin}${docname}`);
                         return res.json(true)
                    })
         }else if (jenis === 'Tahunan') {
@@ -129,15 +106,8 @@ exports.save = (req , res) =>{
                  dtentryby: new Date()
             })
             .then(()=>{
-                if (os === 'win32' || os ==='win64') {
-                    mkdir(`${urlfile()}${dirWin}${docname}`);
-                 }else if(os ==='linux'){
-                    smbClient.mkdir(`mtg/${docname}` ,function(err){
-                        return console.log(err)
-                    });
-                 }
- 
-                 return res.json(true)
+                mkdir(`${urlfile()}${dirWin}${docname}`);
+                return res.json(true)
             })  
         }else if(jenis === 'Insidentil' ){
             let i = 1;
@@ -154,15 +124,8 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-                if (os === 'win32' || os ==='win64') {
-                    mkdir(`${urlfile()}${dirWin}${docname}`);
-                 }else if(os ==='linux'){
-                    smbClient.mkdir(`mtg/${docname}` ,function(err){
-                        return console.log(err)
-                    });
-                 }
- 
-                 return res.json(true)
+                mkdir(`${urlfile()}${dirWin}${docname}`);
+                return res.json(true)
             })   
         }
     })
