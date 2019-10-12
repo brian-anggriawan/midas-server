@@ -8,6 +8,8 @@ const laporananalis = require('../controller/ctr_laporan_analisis');
 const user = require('../controller/ctr_user');
 const search = require('../controller/ctr_search_repo');
 const chats = require('../controller/ctr_chats');
+const Profile = require('../controller/ctr_profile');
+const Receiver = require('../controller/ctr_receiver');
 
 module.exports = (app)=>{
 
@@ -39,6 +41,7 @@ module.exports = (app)=>{
     app.route('/api/accperiod').get(global.accperiod);
     app.route('/api/periodtoday').get(global.periodtoday);
     app.route('/api/getip').get(global.getIp);
+    app.route('/help').get(global.showPdf);
 
     /* API Global */
 
@@ -46,6 +49,7 @@ module.exports = (app)=>{
 
     app.route('/api/repository').get(masterFile.index);
     app.route('/api/repository/user/:id').get(masterFile.listuser);
+    app.route('/api/repository/dpt/:id').get(masterFile.listRepoByDpt);
     app.route('/api/repository').post(masterFile.save);
     
     /* Master File */
@@ -106,5 +110,21 @@ module.exports = (app)=>{
     app.route('/api/chats/deleteuserchat').delete(chats.deleteUserChat)
 
     /* Chats */
+
+    /* Profile */ 
+    app.route('/api/profile').put(Profile.editProfile);
+
+    /* Profile */ 
+
+    /* receiver */
+    app.route('/api/receiver').get(Receiver.listHeader);
+    app.route('/api/receiver/byreport/:id').get(Receiver.listByReport);
+    app.route('/api/receiver/byreceiver/:id').get(Receiver.listByReceiver);
+    app.route('/api/receiver/posthd').post(Receiver.postHeader);
+    app.route('/api/receiver/postdt').post(Receiver.postDetail);
+    app.route('/api/receiver/puthd').put(Receiver.putHeader);
+    app.route('/api/receiver/delhd').delete(Receiver.delHeader);
+    app.route('/api/receiver/deldt').delete(Receiver.delDetail);
+    /* receiver */
 
 }

@@ -1,5 +1,6 @@
 let mugen = require('../koneksi/con_general');
 let db = require('../koneksi/koneksi');
+let fs = require('fs');
 
 
 exports.sbu = (req , res)=>{
@@ -50,4 +51,14 @@ exports.getIp = ( req , res)=>{
     let ip = req.ip.replace('::','').replace('ffff:' ,'');
 
     res.json(ip)
+}
+
+exports.showPdf = ( req , res )=>{
+    let path = './help/help.pdf';
+    fs.readFile(path , (err , data)=>{
+        res.contentType('application/pdf');
+        res.send(data);
+    });
+
+
 }

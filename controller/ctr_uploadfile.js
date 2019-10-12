@@ -1,8 +1,9 @@
 const db = require('../koneksi/koneksi');
 const path = require('path');
 const  sql = require('mssql');
-const { configsp  , idRecord , authAzure , urlfile , replace}   = require('../global_function/global_function');
+const { configsp  , idRecord , authAzure , replace , urlfile }   = require('../global_function/global_function');
 const fs = require('fs');
+const nodemailer = require('nodemailer');
       
       
 
@@ -65,8 +66,12 @@ exports.save = (req , res)  =>{
 
     let file = req.files.file;
     let fileOrinalName = file.name;
-    let = { description , template , idperiod ,period, directory, nodoc ,repo , blob ,user , sbu , dpt , tmpname} = req.body;
+    let = { description , template , idperiod ,period, directory, nodoc ,repo , blob ,user , sbu , dpt , tmpname , body  , tujuan , body } = req.body;
+    let hasilTujuan = JSON.parse(tujuan);
+
+
     
+
     db.select('*').from('vw_file')
       .where({
           id_template: template,
@@ -89,6 +94,7 @@ exports.save = (req , res)  =>{
          let idrecord = idRecord('fl')+user;
 
 
+                                  
        
          return db('tbdc_file')
                 .insert({
@@ -98,20 +104,56 @@ exports.save = (req , res)  =>{
                     vcidaccperiod: idperiod,
                     vcdescription: description,
                     vmxfile: blob,
-                    vcsrcpath: directory+'\\'+filename,
+                    vcsrcpath: `${directory}\\${filename}`,
                     vcfilename: filename,
                     vcoriginalname: fileOrinalName,
                     vcentryby: user,
                     dtentryby: new Date(),
-                    inflagactive: 1
+                    inflagactive: 1,
+                    txtbody: body
                 }).then(() =>{
+                    file.mv(DirectoryFile)  
                     authAzure.createBlockBlobFromLocalFile('midas',`mtg/${replace(sbu)}/${replace(dpt)}/${directory}/${filename}`, `./File/${filename}` ,(err ,result , response)=>{
                         if (err) {
                             console.log(err)
+                        }else{
+                           
+                            if (hasilTujuan.length > 0) {
+                               
+                                let smtpTransport = nodemailer.createTransport({
+                                    service: "hotmail",
+                                    auth: {
+                                    user: 'document@mustikatama.com',
+                                    pass: 'R4hasiaedp'
+                                    }
+                                });
+
+                                let listMail = [];
+
+                                hasilTujuan.map( x =>{
+                                    listMail.push(x.EMAIL)
+                                });
+
+                                console.log(listMail)
+                                var mailOptions = {
+                                            from: 'document@mustikatama.com',
+                                            to: listMail,
+                                            subject: description,
+                                            text: body,
+                                            attachments: [{'filename': filename, 'path': blob }]
+                                        };
+                                        
+                                        smtpTransport.sendMail(mailOptions, function(err) {
+                                            if (err) {
+                                                console.log(err) 
+                                            }
+                                            console.log(`Pesan Terikirm ke ${listMail}`);
+                                        });  
+                            }
                         }
 
                         fs.unlinkSync(`./File/${filename}`);
-                        file.mv(DirectoryFile)    
+                        
                     })    
                 }).catch(err =>{
                     console.log(err)
@@ -156,15 +198,16 @@ exports.Downloadfile = (req , res) => {
       .where('id_file' ,id)
       .then(data =>{
           if (data) {
-            let hasil = data[0];
-            res.download(`${urlfile()}mtg\\${replace(hasil.SBU)}\\${replace(hasil.DIVISION)}\\${hasil.DIRECTORY}\\${hasil.FILE_NAME}`)
-            // let col = data[0];
-            // global.authAzure.getFileToLocalFile('midas',col.DIRECTORY,col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
-            //     if (err) {
-            //         console.log(err)
-            //     }
-            //     res.download(`./File/${col.FILE_NAME}`)  
-            // })
+            let col = data[0];
+            let directory = `mtg/${replace(col.SBU)}/${replace(col.DIVISION)}/${col.DIRECTORY}/${col.FILE_NAME}`
+            authAzure.getBlobToLocalFile('midas',directory ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
+                if (err) {
+                    console.log(err)
+                }
+                let buffer = fs.readFileSync(`./File/${col.FILE_NAME}`);
+                let bufferBase64 = Buffer.from(buffer);
+                res.json(bufferBase64);
+            })
           }
       })
 }
@@ -173,14 +216,13 @@ exports.Downloadfile = (req , res) => {
 exports.delete = (req , res)=>{
     let {id} = req.params;
 
-    // db.select('*').from('vw_file')
-    //   .where('id_file' , id)
-    //   .then(data =>{
-    //       if (data) {
-    //          let col = data[0];
-    //          fs.unlinkSync(`./File/${col.FILE_NAME}`) 
-    //          res.json(true)
-    //       }
-    //   })
-    res.json(true)
+    db.select('*').from('vw_file')
+      .where('id_file' , id)
+      .then(data =>{
+          if (data) {
+             let col = data[0];
+             fs.unlinkSync(`./File/${col.FILE_NAME}`) 
+             return res.json(true)
+          }
+      })
 }

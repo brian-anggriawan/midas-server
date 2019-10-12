@@ -1,6 +1,5 @@
 const mugen = require('../koneksi/con_general');
 const db = require('../koneksi/koneksi');
-const os = require('os');
 
 exports.listUsers = (req , res)=>{
     let { id } = req.params;

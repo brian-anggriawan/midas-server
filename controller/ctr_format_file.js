@@ -1,6 +1,6 @@
 const db = require('../koneksi/koneksi');
 const path = require('path');
-const { urlfile , idRecord , authAzure} = require('../global_function/global_function');
+const {  idRecord , authAzure , urlfile  } = require('../global_function/global_function');
 const fs = require('fs');
 
 
@@ -36,30 +36,31 @@ exports.save =  (req , res) =>{
     let files = req.files.files;
 
     let id = idRecord('fmfile')+iduser;
+    let fileName = id+path.extname(name);
     let DirectoryFile = urlfile()+'format-file\\'+id+path.extname(name);
     
-    files.mv(`./File/${name}`);
+    files.mv(`./File/${fileName}`);
 
     return db('tbdc_format_file')
             .insert({
                 vcidformatfile: id.trim(),
                 vcidrepo: idrepo,
                 vmxfile: blob,
-                vcfilename: id+path.extname(name),
+                vcfilename: fileName,
                 vcoriginalname: name,
-                vcsrcpath: 'format-file\\'+id+path.extname(name),
+                vcsrcpath: DirectoryFile,
                 vcentryby: iduser,
                 dtentryby: new Date(),
                 inflagactive: 1
             }).then(()=>{
-                authAzure.createBlockBlobFromLocalFile('midas',`format-file/${id+path.extname(name)}`,`./File/${name}` ,(err ,result , response)=>{
+                files.mv(DirectoryFile);
+                authAzure.createBlockBlobFromLocalFile('midas',`format-file/${fileName}`,`./File/${fileName}` ,(err ,result , response)=>{
                     if (err) {
                         console.log(err)
                     }
 
-                    fs.unlinkSync(`./File/${name}`);
+                    fs.unlinkSync(`./File/${fileName}`);
                 })  
-                files.mv(DirectoryFile);
                 res.json(true);    
             })  
 }
@@ -97,14 +98,17 @@ exports.Downloadfile = (req , res) => {
       .where('id_format' ,id)
       .then(data =>{
           if (data) {
-            res.download(urlfile()+data[0].PATH)
-            // let col = data[0];
-            // global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
-            //     if (err) {
-            //         console.log(err)
-            //     }
-            //     res.download(`./File/${col.FILE_NAME}`)  
-            // })
+            let col = data[0];
+            authAzure.getBlobToLocalFile('midas',`format-file/${col.FILE_NAME}`,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
+                if (err) {
+                    console.log(err);
+                    
+                }
+                let buffer = fs.readFileSync(`./File/${col.FILE_NAME}`);
+                let bufferBase64 = Buffer.from(buffer);
+                res.json(bufferBase64);
+               
+            })
           }
       })
 }
@@ -119,31 +123,32 @@ exports.Downloadfile2 = (req , res)=>{
       })
       .then(data =>{
           if (data) {
-            res.download(urlfile()+data[0].PATH)
-            // let col = data[0];
-            // global.authAzure.getFileToLocalFile('midas','format-laporan', col.FILE_NAME ,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
-            //     if (err) {
-            //         console.log(err)
-            //     }
-            //     res.download(`./File/${col.FILE_NAME}`)  
-            // })
+            let col = data[0];
+            authAzure.getBlobToLocalFile('midas',`format-file/${col.FILE_NAME}`,`./File/${col.FILE_NAME}` ,(err , result , response)=>{
+                if (err) {
+                    console.log(err);
+                    
+                }
+                let buffer = fs.readFileSync(`./File/${col.FILE_NAME}`);
+                let bufferBase64 = Buffer.from(buffer);
+                res.json(bufferBase64);
+               
+            })
           }
       })
 
 }
 
 exports.delete = (req , res)=>{
-    // let {id} = req.params;
+    let {id} = req.params;
 
-    // db.select('*').from('vw_list_format_laporan')
-    //   .where('id_format' , id)
-    //   .then(data =>{
-    //       if (data) {
-    //          let col = data[0];
-    //          fs.unlinkSync(`./File/${col.FILE_NAME}`) 
-    //          res.json(true)
-    //       }
-    //   })
-
-    res.json(true)
+    db.select('*').from('vw_list_format_laporan')
+      .where('id_format' , id)
+      .then(data =>{
+          if (data) {
+             let col = data[0];
+             fs.unlinkSync(`./File/${col.FILE_NAME}`) 
+             return res.json(true)
+          }
+      })
 }

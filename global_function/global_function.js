@@ -1,11 +1,72 @@
 const azure = require('azure-storage');
 const uid = require('cuid');
+const mailer = require('nodemailer');
+const ftp = require('ftp-client');
+
+
+const config = {
+    host: '192.168.40.225',
+    port: 21,
+    user: 'midas_app',
+    password: '123456'
+}
+
+const options = {
+    logging: 'basic'
+}
+
+
+const client = new ftp(config , options);
+
+exports.createDir = (dir) =>{
+    return client.connect(()=>{
+        return client.upload(['halo/**'] , `${dir}` , {
+            baseDir:'test',
+            overwrite: 'older'
+        }, function (res){
+            console.log(res);
+        });
+    });
+}
+
+
+exports.uploadFile = (dir , file) =>{
+
+    return client.connect(()=>{
+        return client.upload([`File/${file}`] , `${dir}` , {
+            baseDir:'File',
+            overwrite: 'older'
+        }, function (res){
+            console.log(res);
+        });
+    });  
+}
+
+exports.downloadFile = (dir)=>{
+    return client.connect(()=>{
+        return client.download(dir ,'File' ,{
+            overwrite: 'all'
+        }, function(res){
+            console.log(res)
+        });
+    });
+}
 
 exports.idRecord = (prefix) =>{
     //let time = new Date(),
         //id = prefix+time.getFullYear()+(time.getMonth()+1)+time.getDate()+time.getHours()+time.getMinutes()+time.getSeconds()+time.getMilliseconds();
 
     return `${prefix}${uid(50)}`
+}
+
+exports.mail = ( mail , pass ) =>{
+    return mailer.SMTP = {
+        host: 'host.com', 
+        port:587,
+        use_authentication: true, 
+        user: mail, 
+        pass: pass
+    }
 }
 
 exports.formatDate = (date) => {

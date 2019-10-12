@@ -1,6 +1,5 @@
 const db = require('../koneksi/koneksi');
-const { idRecord ,replace , urlfile } = require('../global_function/global_function');
-const mkdir = require('mkdirp');
+const { idRecord ,replace  , createDir } = require('../global_function/global_function');
 
 
 
@@ -22,13 +21,23 @@ exports.listuser = (req , res)=>{
       })
 }
 
+exports.listRepoByDpt = (req , res ) =>{
+    let { id } = req.params;
+
+    db.select('*').from('vw_list_repository')
+      .where('ID_DPT' , id)
+      .then(data =>{
+          return res.json(data);
+      });
+}
+
 exports.save = (req , res) =>{
     let { name , jenis , ket , user ,divisi , sbu ,nodoc , sbuname , divname} = req.body;
     let id  = idRecord('mst');
     let repository = `${nodoc}-${name}`;
     let docname = replace(repository.trim());
-    let dirWin = `\\mtg\\${replace(sbuname)}\\${replace(divname)}\\`;
 
+    createDir(`mtg/${replace(sbuname)}/${replace(divname)}/${docname}`);
 
     db('tbdc_repository')
     .insert({
@@ -60,7 +69,6 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-                mkdir(`${urlfile()}${dirWin}${docname}`);
                 return res.json(true)
             })
 
@@ -79,7 +87,6 @@ exports.save = (req , res) =>{
                 })
            }
            return db('tbdc_template_repository').insert(data).then(()=> {
-                mkdir(`${urlfile()}${dirWin}${docname}`);
                 return res.json(true)
            });
             
@@ -93,7 +100,6 @@ exports.save = (req , res) =>{
                         dtentryby: new Date()
                    })
                    .then(()=>{
-                        mkdir(`${urlfile()}${dirWin}${docname}`);
                         return res.json(true)
                    })
         }else if (jenis === 'Tahunan') {
@@ -106,7 +112,6 @@ exports.save = (req , res) =>{
                  dtentryby: new Date()
             })
             .then(()=>{
-                mkdir(`${urlfile()}${dirWin}${docname}`);
                 return res.json(true)
             })  
         }else if(jenis === 'Insidentil' ){
@@ -124,7 +129,6 @@ exports.save = (req , res) =>{
                 })  
             }
             return db('tbdc_template_repository').insert(data).then(()=>{
-                mkdir(`${urlfile()}${dirWin}${docname}`);
                 return res.json(true)
             })   
         }
