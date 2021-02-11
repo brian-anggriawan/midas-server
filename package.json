@@ -34,7 +34,7 @@
     "node-windows": "^0.1.14",
     "nodemailer": "^6.3.0",
     "nodemon": "^1.18.10",
-    "samba-client": "^2.1.0",
+    "samba-client": "^4.0.0",
     "socket.io": "^2.2.0",
     "uid": "0.0.2"
   }
