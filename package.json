@@ -32,7 +32,7 @@
     "mssql": "^5.0.3",
     "multer": "^1.4.1",
     "node-windows": "^0.1.14",
-    "nodemailer": "^6.3.0",
+    "nodemailer": "^6.4.16",
     "nodemon": "^1.18.10",
     "samba-client": "^2.1.0",
     "socket.io": "^2.2.0",
